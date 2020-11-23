@@ -72,7 +72,10 @@
       }"
     />
 
-    <q-btn @click="showShortestPath(JSON.parse(JSON.stringify(graph.vertices)))" label="show_graph" />
+    <q-btn @click="() => {
+      setDijkstraVertices(JSON.parse(JSON.stringify(graph)));
+      dijkstra(0);
+    }" label="show_graph" />
     <table id="dijkstraSteps"></table>
 
   </div>
