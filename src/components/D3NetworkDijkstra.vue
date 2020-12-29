@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <label> Node size  </label>
+      <label> Node size </label>
       <q-slider
         v-model="graph.nodeSize"
         :min="1"
@@ -42,7 +42,7 @@
         @click="addVertex"
       />
 
-        <!--<label>Render as  </label>
+      <!--<label>Render as  </label>
         <input type="radio" :value="false" v-model="canvas" />
         <label>SVG</label>
         <input type="radio" :value="true" v-model="canvas" />
@@ -50,10 +50,22 @@
       <dialog-params
         :edge="edgeParams.edge"
         :show-dialog="edgeParams.showDialog"
-        :remove="() => { removeEdge() }"
+        :remove="
+          () => {
+            removeEdge();
+          }
+        "
         submit-function-name="update-selected-edge"
-        @update-selected-edge="cost => { updateEdge(cost);}"
-        :cancel="() => {edgeParams.showDialog = false;}"
+        @update-selected-edge="
+          cost => {
+            updateEdge(cost);
+          }
+        "
+        :cancel="
+          () => {
+            edgeParams.showDialog = false;
+          }
+        "
       />
     </div>
 
@@ -63,62 +75,83 @@
       :net-nodes="graph.vertices"
       :net-links="graph.edges"
       :options="options"
-      @node-click="(event,node_object) => {
-        if(vertexParams === 'connexion')addEdge(node_object)
-      }"
-      @link-click="(event, link_object) => {
-        edgeParams.edge = link_object;
-        edgeParams.showDialog = true;
-      }"
+      @node-click="handleClickNodes"
+      @link-click="
+        (event, link_object) => {
+          edgeParams.edge = link_object;
+          edgeParams.showDialog = true;
+        }
+      "
     />
 
-    <q-btn @click="() => {
-      setDijkstraVertices(JSON.parse(JSON.stringify(graph)));
-      dijkstra(0);
-    }" label="show_graph" />
+    <q-btn
+      @click="
+        () => {
+          setDijkstraVertices(JSON.parse(JSON.stringify(graph)));
+          dijkstra(0);
+        }
+      "
+      label="show_graph"
+    />
     <table id="dijkstraSteps"></table>
-
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent, ref } from '@vue/composition-api';
+import { useDijkstra } from './compositions/graph';
+import { useShortestPath } from 'components/compositions/dijkstra/shortest-path';
+import DialogParams from 'components/DialogParams.vue';
 
-  import {defineComponent, ref} from "@vue/composition-api";
-  import { useDijkstra} from "./compositions/graph";
-    import {useShortestPath} from "components/compositions/dijkstra/shortest-path";
-    import DialogParams from "components/DialogParams.vue";
+export default defineComponent({
+  name: 'D3NetworkDijkstra',
+  components: {
+    D3Network: require('vue-d3-network'),
+    DialogParams
+  },
+  setup() {
+    const vertexParams = ref<string>('connexion');
+    const {
+      graph,
+      options,
+      edgeParams,
+      addVertex,
+      removeVertex,
+      addEdge,
+      removeEdge,
+      updateEdge,
+      links
+    } = useDijkstra();
 
-    export default defineComponent({
-      name: "D3NetworkDijkstra",
-      components: {
-        D3Network: require("vue-d3-network"),
-        DialogParams
-      },
-      setup() {
-        const vertexParams = ref<string>('connexion');
+    function handleClickNodes(event, node_object) {
+      console.log(links.value);
+      if (vertexParams.value === 'connexion') addEdge(node_object);
+    }
 
-        return {
-          vertexParams,
-          ...useDijkstra(),
-          ...useShortestPath()
-        }
-      },
-      data () {
-        return {
-          edgeParams: {
-            edge: {sid: -1, tid: -1, name: 1},
-            showDialog: false
-          }
-
-        }
-      },
-      methods: {
-        getNode(e: any) {
-          alert(e.sid + " "+ e.tid);
-        }
+    return {
+      handleClickNodes,
+      //useDijkstra
+      vertexParams,
+      graph,
+      options,
+      edgeParams,
+      addVertex,
+      removeVertex,
+      addEdge,
+      removeEdge,
+      updateEdge,
+      ...useShortestPath()
+    };
+  },
+  data() {
+    return {
+      edgeParams: {
+        edge: { sid: -1, tid: -1, name: 1 },
+        showDialog: false
       }
-    })
+    };
+  }
+});
 </script>
 
-<style lang="css" src="vue-d3-network/dist/vue-d3-network.css">
-</style>
+<style lang="css" src="vue-d3-network/dist/vue-d3-network.css"></style>
