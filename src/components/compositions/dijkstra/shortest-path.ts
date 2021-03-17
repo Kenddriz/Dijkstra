@@ -34,7 +34,7 @@ export const useShortestPath = () => {
   const dijkstra = (sId: number) => {
     //initialization
     const table: any = document.getElementById('dijkstraSteps');
-    const markedVertices = [];
+    const markedVertices: DijkstraVertex[] = [];
     const source: DijkstraVertex | undefined = vertices.find(v => v.id === sId);
     let tr = 0,
       round = 1;
@@ -68,7 +68,7 @@ export const useShortestPath = () => {
         ', ' +
         (vertices[i].previous == null ? '-' : vertices[i].previous?.name);
     }
-    //interface end
+    // //interface end
 
     do {
       //find vertex with minimum cost
@@ -126,6 +126,7 @@ export const useShortestPath = () => {
   };
 
   return {
+    vertices,
     setDijkstraVertices,
     dijkstra,
     showShortestPath
