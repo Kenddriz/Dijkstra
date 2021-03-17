@@ -1,7 +1,7 @@
 <template>
   <q-page class=" flex row ">
-    <Panel class="row" style="width: 20%; padding: 10px; " />
-    <D3NetworkDijkstra style="width: 50%" />
+    <Panel class="row" style="width: 25%; padding: 10px; " />
+    <D3NetworkDijkstra style="width: 45%;  padding-top: 10px" />
     <Table style="width: 30%" />
   </q-page>
 </template>
