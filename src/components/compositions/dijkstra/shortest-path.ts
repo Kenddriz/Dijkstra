@@ -44,6 +44,7 @@ export const useShortestPath = () => {
     let cell = row.insertCell(0);
     cell.innerHTML = 'Round';
 
+
     //setVertexNeighbors();
 
     for (let i = 0; i < vertices.length; i++) {
@@ -63,10 +64,11 @@ export const useShortestPath = () => {
     cell.innerHTML = round;
     for (let i = 0; i < vertices.length; i++) {
       cell = row.insertCell(i + 1);
-      cell.innerHTML = vertices[i].cost == INF ? '∞' : vertices[i].cost;
-      cell.innerHTML +=
-        ', ' +
-        (vertices[i].previous == null ? '-' : vertices[i].previous?.name);
+      let html = vertices[i].cost == INF ? '∞' : vertices[i].cost;
+      html += ', ' +
+      (vertices[i].previous == null ? '-' : vertices[i].previous?.name);
+
+      cell.innerHTML = html
     }
     // //interface end
 
@@ -109,10 +111,12 @@ export const useShortestPath = () => {
         for (let i = 0; i < vertices.length; i++) {
           cell = row.insertCell(i + 1);
           if (vertices[i].markedRound > round) {
-            cell.innerHTML = vertices[i].cost == INF ? '∞' : vertices[i].cost;
-            cell.innerHTML +=
-              ', ' +
-              (vertices[i].previous == null ? '-' : vertices[i].previous?.name);
+            let html = vertices[i].cost == INF ? '∞' : vertices[i].cost;
+            html +=
+            ', ' +
+            (vertices[i].previous == null ? '-' : vertices[i].previous?.name);
+
+            cell.innerHTML = html;
           }
         }
       }

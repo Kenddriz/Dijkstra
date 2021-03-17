@@ -1,4 +1,4 @@
-export type Vertex = {
+export type Nodes = {
   id: number;
   name: string;
   _color?: string;
@@ -11,7 +11,6 @@ export type Edge = {
   name: number /**Valeur de l'arc*/;
   _color?: string;
 };
-
 export type Options = {
   force: number;
   size: { w: number; h: number };
@@ -23,7 +22,10 @@ export type Options = {
   strLinks: boolean;
 };
 export type Graph = {
-  vertices: Vertex[];
+  nodes: Nodes[];
   edges: Edge[];
+  selectedNodes: Nodes[];
+  selectedEdge: Edge | null;
+  edgeIsAddable: boolean;
   nodeSize: number;
 };
