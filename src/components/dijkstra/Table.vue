@@ -9,6 +9,7 @@
       class=" full-width"
       style=" min-height: 200px"
       separator="cell"
+      hide-bottom
     />
   </div>
 </template>
@@ -37,7 +38,8 @@ export default defineComponent({
         return col;
       });
 
-      col.unshift({ name: 'round', label: 'Round', field: 'round' });
+      if (graph.nodes.length > 0)
+        col.unshift({ name: 'round', label: 'Round', field: 'round' });
       return col;
     });
 

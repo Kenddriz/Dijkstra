@@ -7,7 +7,8 @@ export const graph = reactive<Graph>({
   selectedNodes: [],
   selectedEdge: null,
   edgeIsAddable: false,
-  nodeSize: 20
+  nodeSize: 20,
+  edgeSize: 4
 });
 
 
@@ -24,6 +25,26 @@ export const useGraph = () => {
       strLinks: true
     };
   });
+
+  function initSelections(node = false, edge = false){
+    if(node) {
+      graph.selectedNodes = []
+
+    graph.nodes = graph.nodes.map(node => {
+      node._color = ''
+      return node
+    })
+    }
+
+    if(edge) {
+      graph.selectedEdge = null;
+
+      graph.edges = graph.edges.map(edge => {
+        edge._color = ''
+        return edge
+      })
+    }
+  }
 
   function addNodes(){
     let id = 0;
@@ -75,12 +96,14 @@ export const useGraph = () => {
       })
     })
 
-    graph.selectedEdge = null;
+    // graph.selectedEdge = null;
 
-    graph.edges = graph.edges.map(edge => {
-      edge._color = ''
-      return edge
-    })
+    // graph.edges = graph.edges.map(edge => {
+    //   edge._color = ''
+    //   return edge
+    // })
+
+    initSelections(false, true)
 
   }
 
@@ -97,12 +120,14 @@ export const useGraph = () => {
       return edge
     })
 
-    graph.selectedNodes = []
+    // graph.selectedNodes = []
 
-    graph.nodes = graph.nodes.map(node => {
-      node._color = ''
-      return node
-    })
+    // graph.nodes = graph.nodes.map(node => {
+    //   node._color = ''
+    //   return node
+    // })
+
+    initSelections(true, false)
   }
 
 
@@ -117,6 +142,14 @@ export const useGraph = () => {
         name: arcValue,
         _color: ''
       })
+
+    //   graph.selectedNodes = []
+
+    // graph.nodes = graph.nodes.map(node => {
+    //   node._color = ''
+    //   return node
+    // })
+    initSelections(true, true)
     }
   };
 
@@ -130,9 +163,36 @@ export const useGraph = () => {
 
         return edge
       })
+
+      initSelections(true, true)
     }
   }
 
-  return {options, graph, addNodes, setSelectedNode, addEdge, updateAdge, setSelectedEdge}
+  function removeEdge() {
+    if(graph.selectedEdge) {
+      graph.edges = graph.edges.filter(i => i.sid != graph.selectedEdge?.sid && i.tid != graph.selectedEdge?.tid)
+    }
+  }
+
+  const getLastNode = computed(() => graph.nodes[graph.nodes.length > 0 ? graph.nodes.length - 1 : graph.nodes.length ]
+    )
+
+
+  function removeNode(): boolean {
+    let isLinked = true;
+
+    if(getLastNode.value){
+        isLinked = graph.edges.filter(i => i.sid == getLastNode.value.id || i.tid == getLastNode.value.id).length > 0
+        console.log({isLinked})
+        if(!isLinked) {
+          // bola ts vita ##################
+          graph.nodes = graph.nodes.filter(n => n.id != getLastNode.value.id)
+        }
+    }
+
+    return !isLinked;
+  }
+
+  return {options, graph, addNodes, setSelectedNode, addEdge, updateAdge, setSelectedEdge, removeEdge, removeNode, getLastNode}
 
 }

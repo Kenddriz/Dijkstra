@@ -1,4 +1,4 @@
-import { reactive, ref } from '@vue/composition-api';
+import { reactive, Ref, ref } from '@vue/composition-api';
 
 export const param = reactive({
   nodeParam: 'connexion',
@@ -8,4 +8,4 @@ export const param = reactive({
   }
 });
 
-export const arc = ref(1);
+export const arc: Ref<number | ''> = ref(1);

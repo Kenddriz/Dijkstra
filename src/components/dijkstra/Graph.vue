@@ -16,7 +16,7 @@
 import { defineComponent } from '@vue/composition-api';
 import { useGraph } from './useGraph';
 import { Nodes } from './useGraph.type';
-import { param, arc } from './pabel';
+import { arc } from './panel';
 import { Edge } from './useGraph.type';
 
 export default defineComponent({

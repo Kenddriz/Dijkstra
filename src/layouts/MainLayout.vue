@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          Recherche Opérationnelle
+          Recherche Opérationnelle: Dijkstra
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'MainLayout'

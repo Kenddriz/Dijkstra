@@ -1,5 +1,6 @@
 import { Nodes, Edge, Graph } from './useGraph.type';
 import {qTable} from './table'
+import { useGraph } from './useGraph';
 
 type DijkstraVertex = Nodes & {
   edges: Edge[];
@@ -33,13 +34,15 @@ export const useDijkstra = () => {
   };
 
   const dijkstra = (sId: number) => {
+    const {
+      getLastNode
+    } = useGraph();
     //initialization
-    const table: any = document.getElementById('dijkstraSteps');
     const markednodes: DijkstraVertex[] = [];
     const source: DijkstraVertex | undefined = nodes.find(v => v.id === sId);
     let round = 1;
     qTable.columns = [];
-    qTable.columns.push({name: 'round', label: 'Round'})
+    // qTable.columns.push({name: 'round', label: 'Round'})
 
 
     //setVertexNeighbors();
@@ -62,6 +65,7 @@ export const useDijkstra = () => {
     }
 
     qTable.data.push(dataRow)
+
     // //interface end
 
     do {
@@ -87,7 +91,12 @@ export const useDijkstra = () => {
         const edge = nodes[m].edges[j];
         if (neighbor)
           if (neighbor.cost > nodes[m].cost + edge.name) {
-            neighbor.cost = nodes[m].cost + edge.name;
+            // neighbor.cost = parseInt(nodes[m].cost.toString()) + parseInt(edge.name.toString());
+            neighbor.cost = Number(nodes[m].cost) + Number(edge.name);
+            // const x =  Number(edge.name);
+            // neighbor.cost = nodes[m].cost + x;
+            console.log(nodes[m].cost, edge.name)
+
             neighbor.previous = nodes[m];
           }
       }
@@ -112,16 +121,39 @@ export const useDijkstra = () => {
 
       //interface end
     } while (markednodes.length < nodes.length);
-  };
 
-  const showShortestPath = (nodes: any) => {
-    const table: any = document.getElementById('dijkstraSteps');
+    let qTableResult = ['']
+
+    // console.log({dataRow: qTable.data.reverse()})
+
+    // qTable.data[getLastNode.value.name]
+    const lastNameAsii = getLastNode.value.name.charCodeAt(0)
+    const firstNameAscii = "A".charCodeAt(0)
+
+    // qTable.data = qTable.data.filter(nodes => {
+    //   const nodesKeys = Object.keys(nodes).filter(i => i != 'round')
+
+    //   const find = nodesKeys.find(i => i == getLastNode.value.name)
+    //   return find ? true : false
+
+    // });
+
+
+
+    const dataTable = [...qTable.data.reverse()]
+    qTable.data.reverse()
+    const dataTablelength = dataTable.length
+    dataTable.forEach(nodes => {
+        const nodesKeys = Object.keys(nodes).filter(i => i != 'round').reverse()
+        console.log(nodesKeys)
+      });
+
+
   };
 
   return {
     nodes,
     setDijkstraNodes,
-    dijkstra,
-    showShortestPath
+    dijkstra
   };
 };

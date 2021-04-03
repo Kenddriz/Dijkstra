@@ -28,4 +28,5 @@ export type Graph = {
   selectedEdge: Edge | null;
   edgeIsAddable: boolean;
   nodeSize: number;
+  edgeSize?: number;
 };

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card style="max-height: 300px; width: 100%">
+    <q-card style="max-height: 350px; width: 100%">
       <q-card-section>
         <label> Node size </label>
         <q-slider
@@ -25,7 +25,7 @@
           outlined
           v-model="arc"
           :label="
-            graph.selectedEdge == null
+            graph.selectedEdge == null || arc == ''
               ? 'Coût du nouvel arc'
               : 'Ajuster coût de l\'arc'
           "
@@ -35,7 +35,7 @@
       <q-separator />
 
       <q-card-actions class="flex justify-center">
-        <q-btn-group push class=" full-width">
+        <q-btn-group push class="full-width q-ma-sm">
           <q-btn
             dense
             :disable="graph.selectedEdge != null"
@@ -43,23 +43,47 @@
             icon="add_box"
             text-color="black"
             label="Sommet"
-            @click="addNodes"
-            class=" full-width"
+            @click="handleAddNode"
+            class="full-width"
           />
           <q-separator vertical />
           <q-btn
             dense
-            :disable="graph.selectedNodes.length < 2"
+            :disable="graph.selectedNodes.length < 2 && !graph.selectedEdge"
             class=" full-width"
             push
             :icon="!graph.selectedEdge ? 'add_box' : 'border_color'"
             text-color="black"
             label="Arc"
             @click="
-              () => (!graph.selectedEdge ? addEdge(arc) : updateAdge(arc))
+              () => (!graph.selectedEdge ? handleAddEdge() : handleUpdateEdge())
             "
           />
         </q-btn-group>
+
+        <q-space />
+
+        <q-btn-group push class="full-width  q-ma-sm">
+          <q-btn
+            dense
+            :disable="graph.selectedEdge == null"
+            class="full-width"
+            push
+            @click="handleRemoveEdge"
+            label="Supprimer ARC"
+          />
+          <q-separator vertical />
+          <q-btn
+            v-if="getLastNode"
+            dense
+            :disable="!getLastNode"
+            class="full-width"
+            push
+            @click="handleRemoveNode"
+            :label="'Supprimer Sommet: ' + getLastNode.name"
+          />
+        </q-btn-group>
+
         <q-btn
           :disable="graph.edges.length <= 0"
           @click="
@@ -76,26 +100,76 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { computed, defineComponent } from '@vue/composition-api';
 import { useGraph } from './useGraph';
-import { param, arc } from './pabel';
+import { param, arc } from './panel';
 import { useDijkstra } from './useDijkstra';
+import { Notify } from 'quasar';
 
 export default defineComponent({
   name: 'Panel',
-  setup() {
-    const { graph, addNodes, addEdge, updateAdge } = useGraph();
+  setup(_, { root: { $q } }) {
+    const {
+      graph,
+      addNodes,
+      addEdge,
+      updateAdge,
+      removeEdge,
+      removeNode,
+      getLastNode
+    } = useGraph();
     const { setDijkstraNodes, dijkstra } = useDijkstra();
+
+    function handleAddNode() {
+      addNodes();
+      arc.value = 1;
+    }
+
+    function handleAddEdge() {
+      addEdge(arc.value as number);
+      arc.value = 1;
+    }
+
+    function handleUpdateEdge() {
+      updateAdge(arc.value as number);
+      arc.value = 1;
+    }
+
+    function handleRemoveEdge() {
+      removeEdge();
+      graph.selectedEdge = null;
+      graph.selectedNodes = [];
+    }
+
+    function handleRemoveNode() {
+      const isRemoved = removeNode();
+      if (isRemoved) {
+        graph.selectedEdge = null;
+        graph.selectedNodes = [];
+      } else {
+        $q.notify({
+          message: "Ce sommet est lien à d'autre sommet.",
+          type: 'warning',
+          position: 'bottom'
+        });
+      }
+    }
 
     return {
       arc,
+      handleAddNode,
+      handleAddEdge,
+      handleUpdateEdge,
       param,
       graph,
       addNodes,
       addEdge,
       updateAdge,
       setDijkstraNodes,
-      dijkstra
+      dijkstra,
+      handleRemoveEdge,
+      handleRemoveNode,
+      getLastNode
     };
   }
 });
