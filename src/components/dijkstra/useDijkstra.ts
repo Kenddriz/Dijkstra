@@ -1,6 +1,6 @@
 import { Nodes, Edge, Graph } from './useGraph.type';
 import {qTable} from './table'
-import { useGraph } from './useGraph';
+import { useGraph, graph } from './useGraph';
 
 type DijkstraVertex = Nodes & {
   edges: Edge[];
@@ -91,11 +91,10 @@ export const useDijkstra = () => {
         const edge = nodes[m].edges[j];
         if (neighbor)
           if (neighbor.cost > nodes[m].cost + edge.name) {
-            // neighbor.cost = parseInt(nodes[m].cost.toString()) + parseInt(edge.name.toString());
-            neighbor.cost = Number(nodes[m].cost) + Number(edge.name);
-            // const x =  Number(edge.name);
-            // neighbor.cost = nodes[m].cost + x;
-            console.log(nodes[m].cost, edge.name)
+            // const cost = parseInt(nodes[m].cost.toString()) + parseInt(edge.name.toString());
+            // neighbor.cost = cost;
+
+            neighbor.cost = nodes[m].cost +  edge.name;
 
             neighbor.previous = nodes[m];
           }
@@ -122,32 +121,43 @@ export const useDijkstra = () => {
       //interface end
     } while (markednodes.length < nodes.length);
 
-    let qTableResult = ['']
 
-    // console.log({dataRow: qTable.data.reverse()})
+    // let finish = false;
+    // let column = getLastNode.value.name
+    // let dist = 0
 
-    // qTable.data[getLastNode.value.name]
-    const lastNameAsii = getLastNode.value.name.charCodeAt(0)
-    const firstNameAscii = "A".charCodeAt(0)
+    // while(!finish){
 
-    // qTable.data = qTable.data.filter(nodes => {
-    //   const nodesKeys = Object.keys(nodes).filter(i => i != 'round')
+    //   const lastColumn: Array<string> = qTable.data.filter(data => data[column]).map(data => data[getLastNode.value.name])
+    //   let colVal = 50000000000
 
-    //   const find = nodesKeys.find(i => i == getLastNode.value.name)
-    //   return find ? true : false
+    //   lastColumn.forEach(row => {
+    //     const left = row.split(',')[0], right = row.split(',')[1]
+    //     if(left != '∞' && right.trim() != '-' && parseInt(left) <= colVal ){
+    //       colVal = Number(left)
 
-    // });
+    //       if(column.trim() != 'A') {
+    //         const id1 = graph.nodes.filter(n => n.name == column.trim())[0].id
+    //         const id2 = graph.nodes.filter(n => n.name == right.trim())[0].id
 
+    //         graph.edges = graph.edges.map(e => {
+    //           if((e.sid == id1 && e.tid == id2) || e.sid == id2 && e.tid == id1){
+    //             e._color = 'red'
+    //           }
+    //           return e
+    //         })
+    //       }
 
+    //       column = right
+    //     }
 
-    const dataTable = [...qTable.data.reverse()]
-    qTable.data.reverse()
-    const dataTablelength = dataTable.length
-    dataTable.forEach(nodes => {
-        const nodesKeys = Object.keys(nodes).filter(i => i != 'round').reverse()
-        console.log(nodesKeys)
-      });
+    //     if(right.trim() == 'A') finish = true
+    //   })
+    //   dist += colVal
+    //   finish = true
+    // }
 
+    // console.log(dist)
 
   };
 

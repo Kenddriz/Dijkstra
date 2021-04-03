@@ -148,7 +148,7 @@ export default defineComponent({
         graph.selectedNodes = [];
       } else {
         $q.notify({
-          message: "Ce sommet est lien à d'autre sommet.",
+          message: "Ce sommet est liée à d'autre(s) sommet.",
           type: 'warning',
           position: 'bottom'
         });
