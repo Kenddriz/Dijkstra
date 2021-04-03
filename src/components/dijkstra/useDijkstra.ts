@@ -91,10 +91,10 @@ export const useDijkstra = () => {
         const edge = nodes[m].edges[j];
         if (neighbor)
           if (neighbor.cost > nodes[m].cost + edge.name) {
-            // const cost = parseInt(nodes[m].cost.toString()) + parseInt(edge.name.toString());
-            // neighbor.cost = cost;
+            const cost = parseInt(nodes[m].cost.toString()) + parseInt(edge.name.toString());
+            neighbor.cost = cost;
 
-            neighbor.cost = nodes[m].cost +  edge.name;
+            // neighbor.cost = nodes[m].cost +  edge.name;
 
             neighbor.previous = nodes[m];
           }
@@ -122,42 +122,47 @@ export const useDijkstra = () => {
     } while (markednodes.length < nodes.length);
 
 
-    // let finish = false;
-    // let column = getLastNode.value.name
-    // let dist = 0
+    let column = getLastNode.value.name
+    let dist = 0
+    const nodesList = [];
 
-    // while(!finish){
+    qTable.data.forEach(e =>     {
+      const lastColumn: Array<string> = qTable.data.filter(data => data[column.trim()]).map(data => data[column.trim()])
+      let colVal = 0
+      nodesList.push(column.trim() as never)
 
-    //   const lastColumn: Array<string> = qTable.data.filter(data => data[column]).map(data => data[getLastNode.value.name])
-    //   let colVal = 50000000000
+      lastColumn.forEach(row => {
+        const left = row.split(',')[0], right = row.split(',')[1]
 
-    //   lastColumn.forEach(row => {
-    //     const left = row.split(',')[0], right = row.split(',')[1]
-    //     if(left != '∞' && right.trim() != '-' && parseInt(left) <= colVal ){
-    //       colVal = Number(left)
+        if(left != '∞' && right.trim() != '-' && (parseInt(left) < colVal || colVal == 0)){
+          colVal = Number(left)
+          column = right
+        }
 
-    //       if(column.trim() != 'A') {
-    //         const id1 = graph.nodes.filter(n => n.name == column.trim())[0].id
-    //         const id2 = graph.nodes.filter(n => n.name == right.trim())[0].id
 
-    //         graph.edges = graph.edges.map(e => {
-    //           if((e.sid == id1 && e.tid == id2) || e.sid == id2 && e.tid == id1){
-    //             e._color = 'red'
-    //           }
-    //           return e
-    //         })
-    //       }
+      })
+      dist += colVal
+    });
 
-    //       column = right
-    //     }
 
-    //     if(right.trim() == 'A') finish = true
-    //   })
-    //   dist += colVal
-    //   finish = true
-    // }
+    console.log(dist)
 
-    // console.log(dist)
+
+    for(let i = 0; i < nodesList.length - 1; i++){
+      console.log(nodesList.slice(i,i + 2))
+
+      graph.nodes.filter(n => n.name == nodesList.slice(i,i + 2)[0])[0].id
+
+      const id1 = graph.nodes.filter(n => n.name == nodesList.slice(i,i + 2)[0])[0].id
+        const id2 = graph.nodes.filter(n => n.name == nodesList.slice(i,i + 2)[1])[0].id
+
+        graph.edges = graph.edges.map(e => {
+          if((e.sid == id1 && e.tid == id2) || e.sid == id2 && e.tid == id1){
+            e._color = 'red'
+          }
+          return e
+        })
+    }
 
   };
 
