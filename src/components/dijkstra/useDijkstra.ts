@@ -1,6 +1,7 @@
 import { Nodes, Edge, Graph } from './useGraph.type';
-import {qTable} from './table'
+import { qTable } from './table';
 import { useGraph, graph } from './useGraph';
+import { ref } from '@vue/composition-api';
 
 type DijkstraVertex = Nodes & {
   edges: Edge[];
@@ -14,6 +15,7 @@ type DijkstraVertex = Nodes & {
 export const useDijkstra = () => {
   let nodes: Array<DijkstraVertex> = [];
   const INF = 500000;
+  const nodesList = ref([]);
 
   const setDijkstraNodes = (graph: Graph) => {
     nodes = [];
@@ -34,9 +36,7 @@ export const useDijkstra = () => {
   };
 
   const dijkstra = (sId: number) => {
-    const {
-      getLastNode
-    } = useGraph();
+    const { getLastNode } = useGraph();
     //initialization
     const markednodes: DijkstraVertex[] = [];
     const source: DijkstraVertex | undefined = nodes.find(v => v.id === sId);
@@ -44,27 +44,26 @@ export const useDijkstra = () => {
     qTable.columns = [];
     // qTable.columns.push({name: 'round', label: 'Round'})
 
-
     //setVertexNeighbors();
 
     for (let i = 0; i < nodes.length; i++) {
       //interface begin
-      qTable.columns.push({name: nodes[i].name, label: nodes[i].name})
+      qTable.columns.push({ name: nodes[i].name, label: nodes[i].name });
     }
 
     if (source) source.cost = 0;
 
     //interface begin
     qTable.data = [];
-    let dataRow = { round }
+    let dataRow = { round };
     for (let i = 0; i < nodes.length; i++) {
       let html = nodes[i].cost == INF ? '∞' : nodes[i].cost;
-      html += ', ' +
-      (nodes[i].previous == null ? '-' : nodes[i].previous?.name);
-      dataRow[nodes[i].name] = html
+      html +=
+        ', ' + (nodes[i].previous == null ? '-' : nodes[i].previous?.name);
+      dataRow[nodes[i].name] = html;
     }
 
-    qTable.data.push(dataRow)
+    qTable.data.push(dataRow);
 
     // //interface end
 
@@ -91,7 +90,9 @@ export const useDijkstra = () => {
         const edge = nodes[m].edges[j];
         if (neighbor)
           if (neighbor.cost > nodes[m].cost + edge.name) {
-            const cost = parseInt(nodes[m].cost.toString()) + parseInt(edge.name.toString());
+            const cost =
+              parseInt(nodes[m].cost.toString()) +
+              parseInt(edge.name.toString());
             neighbor.cost = cost;
 
             // neighbor.cost = nodes[m].cost +  edge.name;
@@ -102,73 +103,108 @@ export const useDijkstra = () => {
 
       //interface begin
       round++;
-      dataRow = { round }
+      dataRow = { round };
       if (markednodes.length < nodes.length) {
-
         for (let i = 0; i < nodes.length; i++) {
           if (nodes[i].markedRound > round) {
             let html = nodes[i].cost == INF ? '∞' : nodes[i].cost;
             html +=
-            ', ' +
-            (nodes[i].previous == null ? '-' : nodes[i].previous?.name);
+              ', ' +
+              (nodes[i].previous == null ? '-' : nodes[i].previous?.name);
 
-            dataRow[nodes[i].name] = html
+            dataRow[nodes[i].name] = html;
           }
         }
-        qTable.data.push(dataRow)
+        qTable.data.push(dataRow);
       }
 
       //interface end
     } while (markednodes.length < nodes.length);
 
+    let column = getLastNode.value.name;
+    let dist = 0;
 
-    let column = getLastNode.value.name
-    let dist = 0
-    const nodesList = [];
-
-    qTable.data.forEach(e =>     {
-      const lastColumn: Array<string> = qTable.data.filter(data => data[column.trim()]).map(data => data[column.trim()])
-      let colVal = 0
-      nodesList.push(column.trim() as never)
+    qTable.data.forEach(e => {
+      const lastColumn: Array<string> = qTable.data
+        .filter(data => data[column.trim()])
+        .map(data => data[column.trim()]);
+      let colVal = 0;
+      nodesList.value.push(column.trim() as never);
 
       lastColumn.forEach(row => {
-        const left = row.split(',')[0], right = row.split(',')[1]
+        const left = row.split(',')[0],
+          right = row.split(',')[1];
 
-        if(left != '∞' && right.trim() != '-' && (parseInt(left) < colVal || colVal == 0)){
-          colVal = Number(left)
-          column = right
+        if (
+          left != '∞' &&
+          right.trim() != '-' &&
+          (parseInt(left) < colVal || colVal == 0)
+        ) {
+          colVal = Number(left);
+          column = right;
         }
-
-
-      })
-      dist += colVal
+      });
+      dist += colVal;
     });
 
+    // for (let i = 0; i < nodesList.value.length - 1; i++) {
+    //   console.log(nodesList.value.slice(i, i + 2));
 
-    console.log(dist)
+    //   graph.nodes.filter(n => n.name == nodesList.value.slice(i, i + 2)[0])[0]
+    //     .id;
 
+    //   const id1 = graph.nodes.filter(
+    //     n => n.name == nodesList.value.slice(i, i + 2)[0]
+    //   )[0].id;
+    //   const id2 = graph.nodes.filter(
+    //     n => n.name == nodesList.value.slice(i, i + 2)[1]
+    //   )[0].id;
 
-    for(let i = 0; i < nodesList.length - 1; i++){
-      console.log(nodesList.slice(i,i + 2))
-
-      graph.nodes.filter(n => n.name == nodesList.slice(i,i + 2)[0])[0].id
-
-      const id1 = graph.nodes.filter(n => n.name == nodesList.slice(i,i + 2)[0])[0].id
-        const id2 = graph.nodes.filter(n => n.name == nodesList.slice(i,i + 2)[1])[0].id
-
-        graph.edges = graph.edges.map(e => {
-          if((e.sid == id1 && e.tid == id2) || e.sid == id2 && e.tid == id1){
-            e._color = 'red'
-          }
-          return e
-        })
-    }
-
+    //   graph.edges = graph.edges.map(e => {
+    //     if ((e.sid == id1 && e.tid == id2) || (e.sid == id2 && e.tid == id1)) {
+    //       e._color = 'red';
+    //     }
+    //     return e;
+    //   });
+    // }
   };
+
+  function responseColore() {
+    for (let i = 0; i < nodesList.value.length - 1; i++) {
+      console.log(nodesList.value.slice(i, i + 2));
+
+      graph.nodes.filter(n => n.name == nodesList.value.slice(i, i + 2)[0])[0]
+        .id;
+
+      const id1 = graph.nodes.filter(
+        n => n.name == nodesList.value.slice(i, i + 2)[0]
+      )[0].id;
+
+      const id2 = graph.nodes.filter(
+        n => n.name == nodesList.value.slice(i, i + 2)[1]
+      )[0].id;
+
+      graph.edges = graph.edges.map(e => {
+        if ((e.sid == id1 && e.tid == id2) || (e.sid == id2 && e.tid == id1)) {
+          e._color = 'red';
+        }
+        return e;
+      });
+    }
+  }
+
+  function initEdgeColor() {
+    graph.edges = graph.edges.map(e => {
+      e._color = '';
+      return e;
+    });
+  }
 
   return {
     nodes,
     setDijkstraNodes,
-    dijkstra
+    dijkstra,
+    responseColore,
+    initEdgeColor
   };
 };

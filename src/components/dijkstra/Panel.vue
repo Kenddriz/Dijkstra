@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card style="max-height: 350px; width: 100%">
+    <q-card style="max-height: 360px; width: 100%">
       <q-card-section>
         <label> Node size </label>
         <q-slider
@@ -43,12 +43,14 @@
             icon="add_box"
             text-color="black"
             label="Sommet"
+            no-caps
             @click="handleAddNode"
             class="full-width"
           />
           <q-separator vertical />
           <q-btn
             dense
+            no-caps
             :disable="graph.selectedNodes.length < 2 && !graph.selectedEdge"
             class=" full-width"
             push
@@ -70,11 +72,13 @@
             class="full-width"
             push
             @click="handleRemoveEdge"
+            no-caps
             label="Supprimer ARC"
           />
           <q-separator vertical />
           <q-btn
             v-if="getLastNode"
+            no
             dense
             :disable="!getLastNode"
             class="full-width"
@@ -86,14 +90,48 @@
 
         <q-btn
           :disable="graph.edges.length <= 0"
-          @click="
-            () => {
-              setDijkstraNodes(JSON.parse(JSON.stringify(graph)));
-              dijkstra(0);
-            }
-          "
-          label="show_graph"
+          @click="handleResoudre"
+          no-caps
+          label="Résoudre"
         />
+
+        <q-btn-group push class="full-width  q-ma-sm">
+          <q-btn
+            dense
+            :disable="qTable.dataShow.length === 0 || qTable.data.length === 0"
+            class="full-width"
+            push
+            @click="handlePrecedant"
+            no-caps
+            label="Précédant"
+          />
+          <q-separator vertical />
+          <q-btn
+            no
+            dense
+            :disable="
+              qTable.data.length === qTable.dataShow.length ||
+                qTable.data.length === 0
+            "
+            class="full-width"
+            push
+            @click="handleSuivant"
+            label="Suivant"
+          />
+          <q-separator vertical />
+          <q-btn
+            no
+            dense
+            :disable="
+              qTable.data.length !== qTable.dataShow.length ||
+                qTable.data.length === 0
+            "
+            class="full-width"
+            push
+            @click="handleDessiner"
+            label="Dessiner chemain"
+          />
+        </q-btn-group>
       </q-card-actions>
     </q-card>
   </div>
@@ -104,7 +142,8 @@ import { computed, defineComponent } from '@vue/composition-api';
 import { useGraph } from './useGraph';
 import { param, arc } from './panel';
 import { useDijkstra } from './useDijkstra';
-import { Notify } from 'quasar';
+import { qTable } from './table';
+import { cloneDeep } from 'lodash';
 
 export default defineComponent({
   name: 'Panel',
@@ -118,7 +157,12 @@ export default defineComponent({
       removeNode,
       getLastNode
     } = useGraph();
-    const { setDijkstraNodes, dijkstra } = useDijkstra();
+    const {
+      setDijkstraNodes,
+      dijkstra,
+      responseColore,
+      initEdgeColor
+    } = useDijkstra();
 
     function handleAddNode() {
       addNodes();
@@ -155,6 +199,49 @@ export default defineComponent({
       }
     }
 
+    function handleResoudre() {
+      setDijkstraNodes(JSON.parse(JSON.stringify(graph)));
+      dijkstra(0);
+      initEdgeColor();
+      qTable.dataShow = [];
+    }
+
+    function handleSuivant() {
+      qTable.dataShow.push(cloneDeep(qTable.data[qTable.dataShow.length]));
+    }
+
+    function handlePrecedant() {
+      qTable.dataShow.pop();
+      initEdgeColor();
+    }
+
+    function handleDessiner() {
+      responseColore();
+      let i = qTable.columns.length - 1;
+      let col = new Array(i);
+
+      for (i; i >= 0; i--) {
+        qTable.dataShow.forEach(d => {
+          // col[i] = d  String.fromCharCode(65)
+          let colVal = d[String.fromCharCode(65 + i)];
+
+          if (colVal) {
+            if (colVal.split(',')[0].trim() !== '∞') {
+              col[i] = col[i]
+                ? parseInt(col[i]) <= parseInt(colVal.split(',')[0].trim())
+                  ? colVal
+                  : col[i]
+                : colVal;
+              // console.log(col[i]);
+            }
+          }
+
+          // console.log({ d: d[String.fromCharCode(65 + i)] });
+        });
+      }
+      console.log(col);
+    }
+
     return {
       arc,
       handleAddNode,
@@ -169,7 +256,13 @@ export default defineComponent({
       dijkstra,
       handleRemoveEdge,
       handleRemoveNode,
-      getLastNode
+      getLastNode,
+      qTable,
+      responseColore,
+      handleResoudre,
+      handleSuivant,
+      handlePrecedant,
+      handleDessiner
     };
   }
 });

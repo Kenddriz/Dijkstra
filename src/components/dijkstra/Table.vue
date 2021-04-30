@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-table
       title="Traitement par l'algorithme de dijkstra"
-      :data="qTable.data"
+      :data="qTable.dataShow"
       :columns="columns"
       row-key="name"
       no-data-label="Ajouter des sommets pour commencer"
@@ -10,7 +10,13 @@
       style=" min-height: 200px"
       separator="cell"
       hide-bottom
-    />
+    >
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td v-for="(c, key) in props.cols" :key="key">{{ c.value }}</q-td>
+        </q-tr>
+      </template>
+    </q-table>
   </div>
 </template>
 
@@ -42,6 +48,11 @@ export default defineComponent({
         col.unshift({ name: 'round', label: 'Round', field: 'round' });
       return col;
     });
+
+    watch(
+      () => qTable.data,
+      val => console.log({ val })
+    );
 
     return {
       qTable,
