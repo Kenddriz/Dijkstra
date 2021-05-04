@@ -2,6 +2,7 @@ export type Nodes = {
   id: number;
   name: string;
   _color?: string;
+  cost: number;
 };
 
 export type Edge = {
@@ -10,6 +11,7 @@ export type Edge = {
   tid: number /**toVertex = target id*/;
   name: number /**Valeur de l'arc*/;
   _color?: string;
+  marked?: boolean;
 };
 export type Options = {
   force: number;

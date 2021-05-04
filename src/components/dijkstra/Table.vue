@@ -10,10 +10,21 @@
       style=" min-height: 200px"
       separator="cell"
       hide-bottom
+      :rows-per-page-options="[10, 20]"
     >
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td v-for="(c, key) in props.cols" :key="key">{{ c.value }}</q-td>
+          <q-td
+            v-for="(c, key) in props.cols"
+            :key="key"
+            :class="{ 'text-red': c.value.color }"
+          >
+            {{ !c.value.color ? c.value.val : '' }}
+
+            <q-badge v-if="c.value.color" color="red">
+              {{ c.value.val }}
+            </q-badge>
+          </q-td>
         </q-tr>
       </template>
     </q-table>

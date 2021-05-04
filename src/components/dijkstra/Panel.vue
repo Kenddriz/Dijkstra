@@ -207,7 +207,9 @@ export default defineComponent({
     }
 
     function handleSuivant() {
-      qTable.dataShow.push(cloneDeep(qTable.data[qTable.dataShow.length]));
+      let data = cloneDeep(qTable.data[qTable.dataShow.length]);
+
+      qTable.dataShow.push(data);
     }
 
     function handlePrecedant() {
@@ -217,29 +219,6 @@ export default defineComponent({
 
     function handleDessiner() {
       responseColore();
-      let i = qTable.columns.length - 1;
-      let col = new Array(i);
-
-      for (i; i >= 0; i--) {
-        qTable.dataShow.forEach(d => {
-          // col[i] = d  String.fromCharCode(65)
-          let colVal = d[String.fromCharCode(65 + i)];
-
-          if (colVal) {
-            if (colVal.split(',')[0].trim() !== '∞') {
-              col[i] = col[i]
-                ? parseInt(col[i]) <= parseInt(colVal.split(',')[0].trim())
-                  ? colVal
-                  : col[i]
-                : colVal;
-              // console.log(col[i]);
-            }
-          }
-
-          // console.log({ d: d[String.fromCharCode(65 + i)] });
-        });
-      }
-      console.log(col);
     }
 
     return {
