@@ -29,21 +29,23 @@ export default defineComponent({
 
     function handleClickNodes(event, node_object) {
       const node: Nodes = { id: node_object.id, name: node_object.name };
+      node_object.fx = node_object.x;
+      node_object.fy = node_object.y;
       setSelectedNode(node);
     }
 
-    function handleClickEdges(event, node_object) {
+    function handleClickEdges(event, edge_object) {
       const edge: Edge = {
-        id: node_object.id,
-        sid: node_object.sid,
-        tid: node_object.tid,
-        name: node_object.name
+        id: edge_object.id,
+        sid: edge_object.sid,
+        tid: edge_object.tid,
+        name: edge_object.name
       };
 
-      if (node_object._color) edge._color = node_object._color;
+      if (edge_object._color) edge._color = edge_object._color;
 
       setSelectedEdge(edge);
-      arc.value = node_object.name;
+      arc.value = edge_object.name;
     }
 
     return {

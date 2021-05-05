@@ -1,8 +1,10 @@
 <template>
   <q-page class=" flex row ">
-    <Panel class="row" style="width: 25%; padding: 10px; " />
-    <D3NetworkDijkstra style="width: 45%;  padding-top: 10px" />
-    <Table style="width: 30%" />
+    <div class=" full-width row justify-center" style="height: 400px; ">
+      <Panel class="row" style="width: 20%; padding: 10px; " />
+      <D3NetworkDijkstra style="width: 80%;  padding-top: 10px" />
+    </div>
+    <Table style="width: 100%" />
   </q-page>
 </template>
 

@@ -16,13 +16,14 @@ export const useGraph = () => {
   const options = computed<Options>(() => {
     return {
       force: 3000,
-      size: { w: 800, h: 700 },
+      size: { w: 1000, h: 500 },
       nodeSize: graph.nodeSize,
       nodeLabels: true,
       linkLabels: true,
       canvas: false,
       fontSize: 15,
-      strLinks: true
+      strLinks: true,
+      linkWidth: 5
     };
   });
 
@@ -171,13 +172,19 @@ export const useGraph = () => {
 
   function removeEdge() {
     if (graph.selectedEdge) {
-      const getEdge = graph.edges.filter(
+      const index = graph.edges.findIndex(
         i =>
           i.sid == graph.selectedEdge?.sid && i.tid == graph.selectedEdge?.tid
-      )[0];
+      );
 
-      graph.edges = cloneDeep(graph.edges.filter(i => i !== getEdge));
+      graph.edges.splice(index, 1);
+
+      graph.edges = graph.edges.map((edge, index) => {
+        edge.id = index.toString();
+        return edge;
+      });
     }
+    console.log({ graph });
   }
 
   const getLastNode = computed(

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card style="max-height: 360px; width: 100%">
+    <q-card style="max-height: 400px; width: 100%">
       <q-card-section>
         <label> Node size </label>
         <q-slider
@@ -83,6 +83,7 @@
             :disable="!getLastNode"
             class="full-width"
             push
+            no-caps
             @click="handleRemoveNode"
             :label="'Supprimer Sommet: ' + getLastNode.name"
           />
@@ -114,6 +115,7 @@
                 qTable.data.length === 0
             "
             class="full-width"
+            no-caps
             push
             @click="handleSuivant"
             label="Suivant"
@@ -129,6 +131,7 @@
             class="full-width"
             push
             @click="handleDessiner"
+            no-caps
             label="Dessiner chemain"
           />
         </q-btn-group>

@@ -10,7 +10,7 @@
       style=" min-height: 200px"
       separator="cell"
       hide-bottom
-      :rows-per-page-options="[10, 20]"
+      :rows-per-page-options="[30]"
     >
       <template v-slot:body="props">
         <q-tr :props="props">
