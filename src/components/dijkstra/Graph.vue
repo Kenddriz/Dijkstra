@@ -8,7 +8,23 @@
       :options="options"
       @node-click="handleClickNodes"
       @link-click="handleClickEdges"
+      :link-cb="lcb"
     />
+    <svg>
+      <defs>
+        <marker
+          id="m-end"
+          markerWidth="10"
+          markerHeight="10"
+          refX="11"
+          refY="3"
+          orient="auto"
+          markerUnits="strokeWidth"
+        >
+          <path d="M0,0 L0,6 L10,3 z"></path>
+        </marker>
+      </defs>
+    </svg>
   </div>
 </template>
 
@@ -52,10 +68,22 @@ export default defineComponent({
       options,
       graph,
       handleClickNodes,
-      handleClickEdges
+      handleClickEdges,
+      lcb(link) {
+        link._svgAttrs = {
+          'marker-end': 'url(#m-end)'
+        };
+        return link;
+      }
     };
   }
 });
 </script>
 
 <style lang="css" src="vue-d3-network/dist/vue-d3-network.css"></style>
+<style lang="css">
+#m-end path,
+#m-start {
+  fill: blue;
+}
+</style>

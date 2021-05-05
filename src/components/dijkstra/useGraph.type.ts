@@ -12,6 +12,7 @@ export type Edge = {
   name: number /**Valeur de l'arc*/;
   _color?: string;
   marked?: boolean;
+  _labelClass: string;
 };
 export type Options = {
   force: number;

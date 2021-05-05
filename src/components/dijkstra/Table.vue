@@ -56,7 +56,7 @@ export default defineComponent({
       });
 
       if (graph.nodes.length > 0)
-        col.unshift({ name: 'round', label: 'Round', field: 'round' });
+        col.unshift({ name: 'round', label: 'Etapes', field: 'round' });
       return col;
     });
 

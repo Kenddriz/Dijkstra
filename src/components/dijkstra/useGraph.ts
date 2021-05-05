@@ -15,15 +15,15 @@ export const graph = reactive<Graph>({
 export const useGraph = () => {
   const options = computed<Options>(() => {
     return {
-      force: 3000,
-      size: { w: 1000, h: 500 },
+      force: 2500,
+      size: { w: window.innerWidth - 400, h: 600 },
       nodeSize: graph.nodeSize,
       nodeLabels: true,
       linkLabels: true,
       canvas: false,
       fontSize: 15,
       strLinks: true,
-      linkWidth: 5
+      linkWidth: 2
     };
   });
 
@@ -143,7 +143,8 @@ export const useGraph = () => {
         sid: graph.selectedNodes[0].id,
         tid: graph.selectedNodes[1].id,
         name: arcValue,
-        _color: ''
+        _color: '',
+        _labelClass: 'label-class'
       });
 
       //   graph.selectedNodes = []

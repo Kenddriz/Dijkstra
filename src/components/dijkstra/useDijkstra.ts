@@ -204,9 +204,8 @@ export const useDijkstra = () => {
     let coloredRow = 0;
 
     for (let i = 0; i < data.length; i++) {
-      if (data[i][nodeName].val !== 'X' && name !== nodes[0].name) {
+      if (data[i][nodeName].val !== 'X' && data[i][nodeName].val !== '0') {
         const newMin = data[i][nodeName].val.split(', ')[0];
-
         if (newMin !== '∞') {
           min = Number(newMin) < min ? Number(newMin) : min;
 
@@ -217,7 +216,8 @@ export const useDijkstra = () => {
         }
       }
     }
-    if (nodeName !== nodes[0].name) data[coloredRow][nodeName].color = true;
+    // if (nodeName !== nodes[0].name)
+    data[coloredRow][nodeName].color = true;
 
     return name;
   }

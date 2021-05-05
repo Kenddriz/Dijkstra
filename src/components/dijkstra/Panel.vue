@@ -1,8 +1,75 @@
 <template>
   <div>
-    <q-card style="max-height: 400px; width: 100%">
+    <q-card style="max-height: 600px; width: 100%">
       <q-card-section>
-        <label> Node size </label>
+        <label class=" full-width text-center">
+          Sauvegarde: {{ saveLabel }}
+        </label>
+        <q-btn-group push class="full-width  q-ma-sm">
+          <q-btn
+            no
+            dense
+            class="full-width"
+            no-caps
+            push
+            @click="() => btnSave('save1')"
+            label="Enregistrement 1"
+          />
+          <q-separator vertical />
+          <q-btn
+            dense
+            class="full-width"
+            push
+            @click="() => btnLoad('save1')"
+            no-caps
+            label="Charger 1"
+          />
+        </q-btn-group>
+
+        <q-btn-group push class="full-width  q-ma-sm">
+          <q-btn
+            no
+            dense
+            class="full-width"
+            no-caps
+            push
+            @click="() => btnSave('save2')"
+            label="Enregistrement 2"
+          />
+          <q-separator vertical />
+          <q-btn
+            dense
+            class="full-width"
+            push
+            @click="() => btnLoad('save2')"
+            no-caps
+            label="Charger 2"
+          />
+        </q-btn-group>
+
+        <q-btn-group push class="full-width  q-ma-sm">
+          <q-btn
+            no
+            dense
+            class="full-width"
+            no-caps
+            push
+            @click="() => btnSave('save3')"
+            label="Enregistrement 3"
+          />
+          <q-separator vertical />
+          <q-btn
+            dense
+            class="full-width"
+            push
+            @click="() => btnLoad('save3')"
+            no-caps
+            label="Charger 3"
+          />
+        </q-btn-group>
+
+        <q-separator class=" full-width" spaced color="grey" />
+        <label> Taille des noeuds </label>
         <q-slider
           v-model="graph.nodeSize"
           :min="1"
@@ -95,6 +162,9 @@
           no-caps
           label="Résoudre"
         />
+        <!-- btn etape -->
+        <q-separator class=" full-width" spaced color="grey" />
+        <label class=" full-width text-center"> Etapes de résolution </label>
 
         <q-btn-group push class="full-width  q-ma-sm">
           <q-btn
@@ -122,7 +192,6 @@
           />
           <q-separator vertical />
           <q-btn
-            no
             dense
             :disable="
               qTable.data.length !== qTable.dataShow.length ||
@@ -132,7 +201,7 @@
             push
             @click="handleDessiner"
             no-caps
-            label="Dessiner chemain"
+            label="Chemin"
           />
         </q-btn-group>
       </q-card-actions>
@@ -141,16 +210,18 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import { useGraph } from './useGraph';
 import { param, arc } from './panel';
 import { useDijkstra } from './useDijkstra';
 import { qTable } from './table';
 import { cloneDeep } from 'lodash';
+import { Graph } from './useGraph.type';
 
 export default defineComponent({
   name: 'Panel',
   setup(_, { root: { $q } }) {
+    const saveLabel = ref('');
     const {
       graph,
       addNodes,
@@ -224,6 +295,18 @@ export default defineComponent({
       responseColore();
     }
 
+    function btnSave(label: string) {
+      localStorage.setItem(label, JSON.stringify(graph));
+      saveLabel.value = label;
+    }
+
+    function btnLoad(label: string) {
+      if (localStorage.getItem(label)) {
+        Object.assign(graph, JSON.parse(localStorage.getItem(label) as string));
+        saveLabel.value = label;
+      }
+    }
+
     return {
       arc,
       handleAddNode,
@@ -244,7 +327,10 @@ export default defineComponent({
       handleResoudre,
       handleSuivant,
       handlePrecedant,
-      handleDessiner
+      handleDessiner,
+      btnSave,
+      btnLoad,
+      saveLabel
     };
   }
 });
