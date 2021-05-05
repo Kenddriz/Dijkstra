@@ -197,27 +197,51 @@ export const useDijkstra = () => {
     });
   };
 
-  function findPathinTable(nodeName: string) {
+  function findPathinTable(
+    nodeName: string,
+    color = 'red',
+    key: number,
+    pervname: any = null
+  ) {
     let min = INF;
     const data = qTable.dataShow;
-    let name = nodeName;
+    const name = [nodeName];
+    let i_name = -1;
     let coloredRow = 0;
+
+    // if (key > 0) {
+    //   data.forEach((d, key) => {
+    //     const nm = d[pervname].val.split(', ')[1];
+    //     console.log({ nm });
+    //     //   if (nm === nodeName) {
+    //     //     data[key][pervname].color = color;
+    //     //   }
+    //   });
+    // }
 
     for (let i = 0; i < data.length; i++) {
       if (data[i][nodeName].val !== 'X' && data[i][nodeName].val !== '0') {
         const newMin = data[i][nodeName].val.split(', ')[0];
         if (newMin !== '∞') {
+          const saveMin = min;
           min = Number(newMin) < min ? Number(newMin) : min;
-
-          if (min === Number(newMin)) {
-            name = data[i][nodeName].val.split(', ')[1].trim();
+          if (min === Number(newMin) && saveMin === Number(newMin)) {
+            const nexName = data[i][nodeName].val.split(', ')[1].trim();
             coloredRow = i;
+            if (!name.find(n => n === nexName)) {
+              i_name++;
+              name[i_name] = nexName;
+
+              if (nodeName.length > 1) {
+                data[coloredRow][nodeName].color = 'green';
+              } else data[coloredRow][nodeName].color = color;
+            }
           }
         }
       }
     }
-    // if (nodeName !== nodes[0].name)
-    data[coloredRow][nodeName].color = true;
+
+    // console.log({ name });
 
     return name;
   }
@@ -225,19 +249,59 @@ export const useDijkstra = () => {
   function responseColore() {
     let min = INF;
     const nodesName = nodes.map(n => n.name).reverse();
-    let nodeName_colored = nodesName[0];
+    const nodeName_coloreds = ref([nodesName[0]]);
 
-    for (let i = qTable.data.length; i > 0; i--) {
-      const save_nodeName_colored = nodeName_colored;
-      nodeName_colored = findPathinTable(nodeName_colored);
-      const tid = nodes.find(n => n.name === save_nodeName_colored)?.id;
-      const sid = nodes.find(n => n.name === nodeName_colored)?.id;
+    for (let key = 0; key < nodeName_coloreds.value.length; key++) {
+      let color = 'red';
+      switch (key) {
+        case 1:
+          color = 'green';
+          break;
+        case 2:
+          color = 'blue';
+          break;
+      }
+      console.log({
+        key,
+        nodeName_coloreds: cloneDeep(nodeName_coloreds.value)
+      });
 
-      const edge = graph.edges.find(
-        e => Number(e.sid) === Number(sid) && Number(e.tid) === Number(tid)
-      );
-      if (edge) {
-        edge._color = 'red';
+      for (let i = qTable.data.length; i > 0; i--) {
+        const save_nodeName_colored = nodeName_coloreds.value[key];
+        const newNames = findPathinTable(
+          nodeName_coloreds.value[key],
+          color,
+          key,
+          key > 0 ? nodeName_coloreds[key - 1] : null
+        );
+        newNames.forEach((nName, keyName) => {
+          if (keyName === 0) {
+            nodeName_coloreds.value[key] = nName;
+            const tid = nodes.find(n => n.name === save_nodeName_colored)?.id;
+            const sid = nodes.find(n => n.name === nodeName_coloreds.value[key])
+              ?.id;
+            const edge = graph.edges.find(
+              e =>
+                Number(e.sid) === Number(sid) && Number(e.tid) === Number(tid)
+            );
+            if (edge) {
+              edge._color = color;
+            }
+          } else {
+            nodeName_coloreds.value.push(nName);
+
+            const tid = nodes.find(n => n.name === save_nodeName_colored)?.id;
+            const sid = nodes.find(n => n.name === nName)?.id;
+            const edge = graph.edges.find(
+              e =>
+                Number(e.sid) === Number(sid) && Number(e.tid) === Number(tid)
+            );
+            if (edge) {
+              const color = key === 0 ? 'green' : 'blue';
+              edge._color = color;
+            }
+          }
+        });
       }
     }
   }

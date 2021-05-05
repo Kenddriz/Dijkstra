@@ -21,7 +21,7 @@
           >
             {{ !c.value.color ? c.value.val : '' }}
 
-            <q-badge v-if="c.value.color" color="red">
+            <q-badge v-if="c.value.color" :color="c.value.color">
               {{ c.value.val }}
             </q-badge>
           </q-td>
